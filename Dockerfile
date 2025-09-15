@@ -64,17 +64,19 @@ LABEL maintainer="firefly.lzh@gmail.com"
 #FROM alpine:latest
 #LABEL maintainer="firefly.lzh@gmail.com"
 #
-#RUN apk add --no-cache --virtual subconverter-deps pcre2 libcurl yaml-cpp
+#RUN apk add --no-cache --virtual subconverter-deps pcre2 libcurl yaml-cpp    
 #
 #COPY --from=builder /subconverter/subconverter /usr/bin/
 #COPY --from=builder /subconverter/base /base/
 
 WORKDIR /
 COPY base/ /base/
-RUN sed -i 's/cloudflare_analytics_token/0b0826a08dc94802b45aa7bc2825446d/g' /base/sub-web/index.html
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # set entry
-WORKDIR /base
-CMD subconverter
+WORKDIR /base  
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+CMD ["subconverter"]
 
 EXPOSE 25500/tcp
